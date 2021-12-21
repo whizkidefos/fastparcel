@@ -5,7 +5,7 @@
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/fastparcel.png' %}">
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.png' %}">
 
 		<title>Fast Parcel</title>
 
@@ -27,7 +27,7 @@
 
 		<nav class="navbar {% if not request.user.is_authenticated %} navbar-expand-lg {% endif %} navbar-light bg-warning">
 			<div class="container">
-				<a class="navbar-brand" href="/">Fast Parcel</a>
+				<a class="navbar-brand text-white" href="/"><img src="{% static 'images/fastparcel-white.png' %}" alt="Fast Parcel Logo" width="50">Fast Parcel</a>
 
 				{% if not request.user.is_authenticated %}
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

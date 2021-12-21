@@ -25,6 +25,10 @@
             <p class="text-center mt-3">
               New to Fast Parcel? <a href="/sign-up/?next={{ request.GET.next }}"><b>Sign Up</b></a>
             </p>
+            <hr>
+            <div class="text-center">
+              <a href="{% url 'social:begin' 'facebook' %}?next={{ request.GET.next }}" class="btn btn-outline-primary btn-block">SignIn with Facebook</a>
+            </div>
           </form>
         </div>
       </div>
