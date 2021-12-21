@@ -1,19 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<!-- Required meta tags -->
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/fastparcel.png' %}">
 
 		<title>Fast Parcel</title>
 
-		{# Load the tag library #} 
-		{% load bootstrap5 %} 
+		{# Load the tag library #}
+		{% load bootstrap5 %}
 
-		{# Load CSS and JavaScript#} 
-		{% bootstrap_css %} {% bootstrap_javascript %} 
+		{# Load CSS and JavaScript#}
+		{% bootstrap_css %}
+		{% bootstrap_javascript %}
 
-		{# Display django.contrib.messages as Bootstrap alerts #} 
+		{# Display django.contrib.messages as Bootstrap alerts #}
 		{% bootstrap_messages %}
 
         {% block head %}
@@ -21,25 +24,32 @@
 
 	</head>
 	<body>
-		
-		<nav class="navbar navbar-expand-lg navbar-light bg-warning">
+
+		<nav class="navbar {% if not request.user.is_authenticated %} navbar-expand-lg {% endif %} navbar-light bg-warning">
 			<div class="container">
 				<a class="navbar-brand" href="/">Fast Parcel</a>
+
+				{% if not request.user.is_authenticated %}
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 
 				<ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-					<li class="nav-item">
-					<a class="nav-link active" aria-current="page" href="#">Customer</a>
+					<li class="nav-item {% if request.GET.next != '/courier/' %}active{% endif %}">
+					<a class="nav-link active" aria-current="page" href="/sign-in/?next=/customer/">Customer</a>
 					</li>
-					<li class="nav-item">
-					<a class="nav-link" href="#">Courier</a>
+					<li class="nav-item {% if request.GET.next == '/courier/' %}active{% endif %}">
+					<a class="nav-link active" aria-current="page" href="/sign-in/?next=/courier/">Courier</a>
 					</li>
 				</ul>
-				
 				</div>
+				{% else %}
+				<form class="form-inline">
+					<span class="mx-4">{{ request.user.get_full_name | title }}</span>
+					<a href="/sign-out" class="btn btn-outline-dark">Sign Out</a>
+				</form>
+				{% endif %}
 			</div>
 		</nav>
 
@@ -47,8 +57,8 @@
         {% endblock %}
 
 		<footer class="text-center mt-5 mb-5">
-			<p>&copy; 2021 Fast Parcel | All Rights Reserved.</p>
+			<p>&copy; 2022 Fast Parcel | All Rights Reserved.</p>
 		</footer>
-		
+
 	</body>
 </html>
