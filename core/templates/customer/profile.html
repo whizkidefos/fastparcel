@@ -2,9 +2,38 @@
 {% load static %}
 {% load bootstrap5 %}
 
+{% block head %}
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAXuL9PPDezRGIDuQiQAKE18n8p3MX7Pm8",
+    authDomain: "fastparcel-12dfb.firebaseapp.com",
+    projectId: "fastparcel-12dfb",
+    storageBucket: "fastparcel-12dfb.appspot.com",
+    messagingSenderId: "609999725979",
+    appId: "1:609999725979:web:22b96076c8e7c5616e6d3e",
+    measurementId: "G-G0XX8B3S5J"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+{% endblock %}
+
 {% block main %}
+<!-- Basic Information -->
 <b class="text-secondary">Basic Information</b>
-<div class="card bg-white mt-2 mb-5">
+<div class="card bg-white mt-2 mb-3">
   <div class="card-body">
     <form method="POST" enctype=multipart/form-data>
       {% csrf_token %}
@@ -15,4 +44,99 @@
     </form>
   </div>
 </div>
+
+<!-- Password -->
+<b class="text-secondary">Change Password</b>
+<div class="card bg-white mt-2 mb-3">
+  <div class="card-body">
+    <form method="POST" enctype=multipart/form-data>
+      {% csrf_token %}
+      {% bootstrap_form password_form %}
+      <input type="hidden" name="action" value="update_password">
+      <button type="submit" class="btn btn-warning">Save</button>
+    </form>
+  </div>
+</div>
+
+<!-- Phone Number -->
+<b class="text-secondary">Phone Number</b>
+<div id="get-code" class="card bg-white mt-2 mb-3">
+
+  <div id="recaptcha-container"></div>
+
+  <div class="card-body">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Your phone number">
+      <button class="btn btn-warning" type="button">Send Code</button>
+    </div>
+  </div>
+</div>
+
+<div id="verify-code" class="card bg-white mt-2 mb-3 d-none">
+  <div class="card-body">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Verification code">
+      <button class="btn btn-warning" type="button">Verify Code</button>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+
+  document.querySelector('#get-code button').addEventListener('click', function() {
+    const phoneNumber = document.querySelector('#get-code input').value;
+    const appVerifier = window.recaptchaVerifier;
+    console.log(phoneNumber);
+    firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+    .then((confirmationResult) => {
+      // SMS sent. Prompt user to type the code from the message, then sign the
+      // user in with confirmationResult.confirm(code).
+      window.confirmationResult = confirmationResult;
+
+      console.log(phoneNumber);
+      console.log(confirmationResult);
+
+      document.querySelector('#get-code').classList.add('d-none');
+      document.querySelector('#verify-code').classList.remove('d-none');
+    }).catch((error) => {
+      // Error; SMS not sent
+      toast(error.message, 'error');
+    });
+
+    document.querySelector('#verify-code').addEventListener('click', function() {
+      const code = document.querySelector('#verify-code input').value;
+
+      confirmationResult.confirm(code).then((result) => {
+        // User signed in successfully.
+        const user = result.user;
+        console.log(user.phoneNumber);
+
+        user.getIdToken().then(function(idToken) {
+          console.log(idToken);
+        });
+      }).catch((error) => {
+        // User couldn't sign in (bad verification code?)
+        toast(error.message, 'error');
+      });
+      console.log(code);
+    });
+  });
+
+  // $(document).ready(function(){
+  //   $('#get-code button').on('click', function() {
+  //     const phoneNumber = $('#get-code input').val();
+  //     console.log(phoneNumber);
+  //
+  //     $('#get-code').addClass('d-none');
+  //     $('#verify-code').removeClass('d-none');
+  //
+  //     $('#verify-code').on('click', function() {
+  //       const code = $('#verify-code').val();
+  //       console.log(code);
+  //     });
+  //   });
+  // });
+</script>
 {% endblock %}
